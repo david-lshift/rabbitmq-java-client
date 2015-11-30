@@ -193,13 +193,12 @@ public class DirectReplyToPerformance {
             this.latch = latch;
         }
 
-        @Override public void handleConsumeOk(String consumerTag) {}
-        @Override public void handleCancelOk(String consumerTag) {}
-        @Override public void handleCancel(String consumerTag) throws IOException {}
-        @Override public void handleShutdownSignal(String consumerTag, ShutdownSignalException sig) {}
-        @Override public void handleRecoverOk(String consumerTag) {}
+        public void handleConsumeOk(String consumerTag) {}
+        public void handleCancelOk(String consumerTag) {}
+        public void handleCancel(String consumerTag) throws IOException {}
+        public void handleShutdownSignal(String consumerTag, ShutdownSignalException sig) {}
+        public void handleRecoverOk(String consumerTag) {}
 
-        @Override
         public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException {
             latch[0].countDown();
         }

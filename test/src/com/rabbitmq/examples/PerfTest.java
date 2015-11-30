@@ -100,7 +100,8 @@ public class PerfTest {
             p.setExchangeType(     exchangeType);
             p.setFlags(            flags);
             p.setMultiAckEvery(    multiAckEvery);
-            p.setMinMsgSize(       minMsgSize);
+            p.setMsgSizeAverage(       minMsgSize);
+            p.setMsgSizeVariance(       ((float)minMsgSize)*0.1f);
             p.setPredeclared(      predeclared);
             p.setConsumerPrefetch( consumerPrefetch);
             p.setChannelPrefetch(  channelPrefetch);

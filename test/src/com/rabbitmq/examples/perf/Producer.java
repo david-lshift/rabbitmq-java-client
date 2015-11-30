@@ -27,6 +27,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.UUID;
@@ -48,15 +49,17 @@ public class Producer extends ProducerConsumerBase implements Runnable, ReturnLi
 
     private final Stats   stats;
 
-    private final byte[]  message;
+    private final int msgSizeAverage;
+    private final float msgSizeVariance;
 
     private Semaphore confirmPool;
     private final SortedSet<Long> unconfirmedSet =
         Collections.synchronizedSortedSet(new TreeSet<Long>());
+    private final Random random = new Random();
 
     public Producer(Channel channel, String exchangeName, String id, boolean randomRoutingKey,
                     List<?> flags, int txSize,
-                    float rateLimit, int msgLimit, int minMsgSize, int timeLimit,
+                    float rateLimit, int msgLimit, int msgSizeAvg, float msgSizeVariance, int timeLimit,
                     long confirm, Stats stats)
         throws IOException {
 
@@ -71,7 +74,9 @@ public class Producer extends ProducerConsumerBase implements Runnable, ReturnLi
         this.rateLimit        = rateLimit;
         this.msgLimit         = msgLimit;
         this.timeLimit        = 1000L * timeLimit;
-        this.message          = new byte[minMsgSize];
+        this.msgSizeAverage   = msgSizeAvg;
+        this.msgSizeVariance  = msgSizeVariance;
+
         if (confirm > 0) {
             this.confirmPool  = new Semaphore((int)confirm);
         }
@@ -176,7 +181,9 @@ public class Producer extends ProducerConsumerBase implements Runnable, ReturnLi
         d.flush();
         acc.flush();
         byte[] m = acc.toByteArray();
-        if (m.length <= message.length) {
+        int length = msgSizeAverage + (int)(random.nextGaussian()*msgSizeVariance);
+        if (m.length <= length) {
+            byte [] message = new byte[length];
             System.arraycopy(m, 0, message, 0, m.length);
             return message;
         } else {

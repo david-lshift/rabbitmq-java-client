@@ -33,7 +33,8 @@ public class MulticastParams {
     private int producerTxSize = 0;
     private int channelPrefetch = 0;
     private int consumerPrefetch = 0;
-    private int minMsgSize = 0;
+    private int msgSizeAverage = 0;
+    private float msgSizeVariance = 0.0f;
 
     private int timeLimit = 0;
     private float producerRateLimit = 0;
@@ -119,8 +120,12 @@ public class MulticastParams {
         this.consumerPrefetch = consumerPrefetch;
     }
 
-    public void setMinMsgSize(int minMsgSize) {
-        this.minMsgSize = minMsgSize;
+    public void setMsgSizeAverage(int minMsgSize) {
+        this.msgSizeAverage = minMsgSize;
+    }
+
+    public void setMsgSizeVariance(float msgSizeVariance) {
+        this.msgSizeVariance = msgSizeVariance;
     }
 
     public void setTimeLimit(int timeLimit) {
@@ -160,8 +165,12 @@ public class MulticastParams {
         return producerCount;
     }
 
-    public int getMinMsgSize() {
-        return minMsgSize;
+    public int getMsgAverage() {
+        return msgSizeAverage;
+    }
+
+    public float getMsgSizeVariance() {
+        return msgSizeVariance;
     }
 
     public String getRoutingKey() {
@@ -182,7 +191,7 @@ public class MulticastParams {
         final Producer producer = new Producer(channel, exchangeName, id,
                                                randomRoutingKey, flags, producerTxSize,
                                                producerRateLimit, producerMsgCount,
-                                               minMsgSize, timeLimit,
+                                               msgSizeAverage, msgSizeVariance, timeLimit,
                                                confirm, stats);
         channel.addReturnListener(producer);
         channel.addConfirmListener(producer);
